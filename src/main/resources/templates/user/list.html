@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <meta charset="utf-8">
+    <title>User List</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" th:href="@{/static/plugin/layui/css/layui.css}" media="all">
+</head>
+<body>
+<div class="searchTable">
+    Username:
+    <div class="layui-inline">
+        <input class="layui-input" name="s_username" id="s_username" autocomplete="off">
+    </div>
+    <button id="searchBtn" class="layui-btn" data-type="reload">Search</button>
+</div>
+
+<table class="layui-hide" id="SysUser" lay-filter="SysUser"></table>
+
+<input type="text" id="ctx" hidden="hidden" th:value="${#request.getContextPath()}">
+
+<!--Edit Form-->
+<div class="layui-row" id="editForm" style="display:none;">
+    <div class="layui-col-md10">
+        <form class="layui-form layui-from-pane" action="" style="margin-top:20px">
+            <input type="text" id="id" name="id" hidden="hidden">
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">Department</label>
+                    <div class="layui-input-line" style="float: left;">
+                        <input type="text" id="deptName" name="deptName" required lay-verify="required"
+                               autocomplete="off"
+                               class="layui-input" disabled="disabled">
+                    </div>
+                    <button class="layui-btn layui-btn-sm" id="chooseDept" type="button"
+                            style="float: left;margin-left: 1.5em;">
+                        <i class="layui-icon">&#xe615;</i>
+                    </button>
+
+                    <input type="hidden" id="deptId" name="deptId"/>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">Username</label>
+                <div class="layui-input-block">
+                    <input type="text" id="username" name="username" required lay-verify="required" autocomplete="off"
+                           placeholder="" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">Password</label>
+                <div class="layui-input-block">
+                    <input type="password" id="password" name="password" required lay-verify="required"
+                           autocomplete="off"
+                           placeholder="" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">Full Name</label>
+                <div class="layui-input-block">
+                    <input type="text" id="truename" name="truename" required lay-verify="required" autocomplete="off"
+                           placeholder="" class="layui-input">
+                </div>
+            </div>
+            <!--<div class="layui-form-item">
+                <label class="layui-form-label">Role</label>
+                <div class="layui-input-block">
+                    <select id="roleId" name="roleId" lay-verify="required">
+                        <option value=""></option>
+                    </select>
+                    <div class="layui-unselect layui-form-select">
+                        <div class="layui-select-title">
+                            <input type="text" placeholder="Please select" value="" readonly=""
+                                   class="layui-input layui-unselect">
+                            <i class="layui-edge"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>-->
+            <div class="layui-form-item" style="margin-top:40px">
+                <div class="layui-input-block">
+                    <button class="layui-btn  layui-btn-submit " lay-submit="" lay-filter="confirm">Confirm</button>
+                    <button type="button" class="layui-btn layui-btn-primary" id="back">Close</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script type="text/html" id="userToolBar">
+    <div class="layui-btn-container">
+        <button class="layui-btn layui-btn-sm" lay-event="add" shiro:hasPermission="user:add">Add</button>
+        <button class="layui-btn layui-btn-sm" lay-event="addRole" shiro:hasPermission="user:addRole">Assign Roles
+        </button>
+    </div>
+</script>
+
+<script type="text/html" id="tbBar">
+    <a class="layui-btn layui-btn-xs" lay-event="edit" shiro:hasPermission="user:edit">Edit</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="remove" shiro:hasPermission="user:remove">Delete</a>
+</script>
+
+<script th:src="@{/static/js/jquery.min.js}" charset="utf-8"></script>
+<script th:src="@{/static/plugin/layui/layui.js}" charset="utf-8"></script>
+<script th:src="@{/static/js/app.js}" charset="utf-8"></script>
+
+<script>
+    layui.use(['jquery', 'table'], function () {
+        var table = layui.table;
+        var form = layui.form;
+
+        table.render({
+            elem: '#SysUser'
+            , url: ctx + '/sysUser/list'
+            , method: 'post'
+            , toolbar: '#userToolBar' //Enable header toolbar and bind left template
+            , defaultToolbar: ['filter', 'exports', 'print', { //Custom header toolbar right icons. If no customization needed, remove this parameter
+                title: 'Tips'
+                , layEvent: 'LAYTABLE_TIPS'
+                , icon: 'layui-icon-tips'
+            }]
+            , title: 'SysUser'
+            , cols: [
+                [
+                    {type: 'checkbox', fixed: 'left'},
+                    {field: 'id', title: 'ID', align: 'center', width: 80}
+                    , {field: 'username', title: 'Username', align: 'center'}
+                    , {field: 'truename', title: 'Full Name', align: 'center'}
+                    , {field: 'deptName', title: 'Department', align: 'center', width: 180}
+                    , {field: 'createUser', title: 'Created By', align: 'center'}
+                    , {
+                    field: 'createTime', title: 'Creation Time', width: 180,
+                    templet: '<div>{{ layui.util.toDateString(d.createTime, "yyyy-MM-dd HH:mm:ss") }}</div>'
+                }
+                    , {field: 'updateUser', title: 'Updated By', align: 'center'}
+                    , {
+                    field: 'updateTime', title: 'Update Time', width: 180,
+                    templet: '<div>{{ layui.util.toDateString(d.createTime, "yyyy-MM-dd HH:mm:ss") }}</div>'
+                }
+                    , {fixed: 'right', title: 'Operations', toolbar: '#tbBar', width: 120}
+                ]
+            ]
+            , page: true
+            , request: {
+                pageName: 'pageNo' //Page number parameter name, default: page
+                , limitName: 'pageSize' //Records per page parameter name, default: limit
+            }
+            , parseData: function (res) { //res is the original returned data
+                return {
+                    "code": 0, //Parse interface status
+                    "msg": "", //Parse prompt text
+                    "count": res.data.total, //Parse data length
+                    "data": res.data.records //Parse data list
+                };
+            }
+
+        });
+
+        var $ = layui.$, active = {
+            reload: function () {
+                var queryWhere = {};
+
+                var userName$_ = $('#s_username');
+                if (userName$_.val() != '') {
+                    queryWhere['username'] = userName$_.val();
+                }
+                //Execute reload
+                table.reload('SysUser', {
+                    page: {
+                        curr: 1 //Start from page 1 again
+                    }
+                    , where: queryWhere
+                    , done: function (res, curr, count) {
+                        this.where = {};
+                    }
+                }, 'data');
+            }
+        };
+
+        $('.searchTable .layui-btn').on('click', function () {
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
+
+        form.on('submit(confirm)', function (massage) {
+            $.ajax({
+                url: ctx + '/sysUser/save',
+                type: "POST",
+                contentType: "application/json",
+                dataType: "json",
+                data: JSON.stringify(massage.field),
+                success: function (data) {
+                    if (data.success) {
+                        layer.closeAll();//Close all popup layers
+                        table.reload('SysUser');
+                    } else {
+                        layer.msg(data.message);
+                    }
+                }
+            });
+
+            return false;
+        });
+
+        //Header toolbar events
+        table.on('toolbar(SysUser)', function (obj) {
+            var checkStatus = table.checkStatus(obj.config.id);
+            var data = checkStatus.data; //Get selected data
+            switch (obj.event) {
+                //Custom header toolbar right icon - Tips
+                case 'add':
+                    //iframe layer-parent-child operation
+                {
+                    var updateIndex = layer.open({
+                        //Layer provides 5 layer types. Values that can be passed: 0 (info box, default) 1 (page layer) 2 (iframe layer) 3 (loading layer) 4 (tips layer)
+                        type: 1,
+                        title: "Add",
+                        area: ['500px', '500px'],
+                        content: $("#editForm")//Reference popup layer's page layer method to load edit interface form
+                    });
+                    setFormValue(null, null);
+                }
+                    break;
+                case 'addRole': {
+                    if (data.length === 0) {
+                        layer.msg('Please select a row');
+                    } else if (data.length > 1) {
+                        layer.msg('You can only edit one at a time');
+                    } else {
+                        layer.open({
+                            //Layer provides 5 layer types. Values that can be passed: 0 (info box, default) 1 (page layer) 2 (iframe layer) 3 (loading layer) 4 (tips layer)
+                            type: 2,
+                            title: "Select Role",
+                            area: ['300px', '550px'],
+                            content: ['selectRole/' + checkStatus.data[0].id]//Reference popup layer's page layer method to load edit interface form
+                        });
+                    }
+                }
+                    break;
+            }
+            ;
+        });
+
+        //Listen for popup form submission, massage is the form data from the edit interface 'submit(confirm), is the binding of the edit button
+
+        //Listen for row tool events
+        table.on('tool(SysUser)', function (obj) {
+            var data = obj.data;
+            // console.log(obj)
+            if (obj.event === 'remove') {
+                layer.confirm('Are you sure you want to delete this row?', function (index) {
+                    $.ajax({
+                        type: "POST",
+                        url: ctx + "/sysUser/remove",
+                        traditional: true,
+                        data: {
+                            id: data.id
+                        },
+                        success: function (data) {
+                            layer.close(index);
+                            var queryWhere = {};
+
+                            //Execute reload
+                            table.reload('SysUser', {
+                                page: {
+                                    curr: 1 //Start from page 1 again
+                                }
+                                , where: queryWhere
+                                , done: function (res, curr, count) {
+                                    this.where = {};
+                                }
+                            }, 'data');
+                        },
+                        error: function (e) {
+                            console.log("ERROR: ", e);
+                        }
+                    });
+                });
+            } else if (obj.event === 'edit') {
+                //iframe layer-parent-child operation
+                var updateIndex = layer.open({
+                    //Layer provides 5 layer types. Values that can be passed: 0 (info box, default) 1 (page layer) 2 (iframe layer) 3 (loading layer) 4 (tips layer)
+                    type: 1,
+                    title: "Edit",
+                    area: ['500px', '500px'],
+                    content: $("#editForm")//Reference popup layer's page layer method to load edit interface form
+
+                });
+                setFormValue(obj, data);
+            }
+        });
+
+        // Fill form
+        function setFormValue(obj, data) {
+            var target = $("#roleId");
+            $.ajax({
+                type: "GET",
+                url: ctx + '/sysRole/listAll',
+                success: function (list) {
+                    target.find("option").remove();
+                    target.append(new Option());
+                    $.each(list, function (index, item) {
+                        target.append(new Option(item.roleName, item.id));
+                    });
+
+                    layui.form.render("select");
+                }
+            });
+            if (data != null) {
+                $("#id").val(data.id);
+                $("#username").val(data.username);
+                $("#password").val(data.password);
+                $("#deptId").val(data.deptId);
+                $("#deptName").val(data.deptName);
+                $("#phone").val(data.phone);
+                $("#email").val(data.email);
+                $("#truename").val(data.truename);
+            } else {
+                $("#id").val('');
+                $("#username").val('');
+                $("#password").val('');
+                $("#deptId").val('');
+                $("#deptName").val('');
+                $("#phone").val('');
+                $("#email").val('');
+                $("#truename").val('');
+            }
+            layui.form.render("select");
+        }
+
+        $("#back").on('click', function () {
+            layer.closeAll();
+        });
+
+        // Open select user tree page
+        $('#chooseDept').on('click', function () {
+            layer.open({
+                //Layer provides 5 layer types. Values that can be passed: 0 (info box, default) 1 (page layer) 2 (iframe layer) 3 (loading layer) 4 (tips layer)
+                type: 2,
+                title: "Select Department",
+                area: ['300px', '550px'],
+                content: 'toSelectDept'//Reference popup layer's page layer method to load edit interface form
+            });
+        })
+    });
+</script>
+
+</body>
+</html>

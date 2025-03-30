@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  authman:
+    container_name: authman
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8081"
+    environment:
+      - JAVA_OPTS=-Djava.awt.headless=true -Dsun.java2d.noddraw=true
+    restart: unless-stopped

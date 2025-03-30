@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>Permission Management System</title>
+    <link rel="shortcut icon" href="/static/favicon.ico" th:href="@{/static/plugin/img/favicon.png}">
+    <link rel="stylesheet" th:href="@{/static/plugin/layui/css/layui.css}">
+
+    <style type="text/css">
+        .rightmenu {
+            position: absolute;
+            display: inline-block;
+            padding: .25em 0;
+            margin: .3em;
+            font-family: inherit;
+            font-size: inherit;
+            list-style-type: none;
+            background: #fff;
+            border: 1px solid #bebebe;
+            border-radius: .2em;
+        }
+
+        .rightmenu li:hover {
+            background: #009688;
+            cursor: pointer;
+        }
+
+        .context-menu-item {
+            position: relative;
+            padding: .2em 2em;
+            color: #2f2f2f;
+            background-color: #fff;
+        }
+
+        .layui-logo {
+            font-size: 18px;
+        }
+
+        .left-menu-icon {
+            margin-right: 5px;
+        }
+
+        .layui-layout-admin .layui-logo {
+            color: #fff;
+        }
+
+        /*Secondary Menu*/
+        .sec-nav {
+            margin-left: 1.5em;
+        }
+    </style>
+</head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+    <div class="layui-header">
+        <div class="layui-logo"><i class="layui-icon" style="margin-right: 10px;font-size: 30px;">&#xe857;</i>
+            <span style="font-size: 12px;">Permission Management System</span>
+        </div>
+        <!-- Header area (can be used with layui's horizontal navigation) -->
+        <ul class="layui-nav layui-layout-left">
+        </ul>
+        <ul class="layui-nav layui-layout-right">
+            <li class="layui-nav-item">
+                <a href="javascript:;">
+                    <!--<img th:src="@{/static/img/avatar.png}" class="layui-nav-img"> <span
+                        th:text="${session.user.username}">Administrator</span>-->
+                    <img th:src="@{/static/img/avatar.png}" class="layui-nav-img"> <span th:text="${user.username}">Administrator</span>
+                </a>
+                <dl class="layui-nav-child">
+                    <dd>
+                        <a href="#" id="modifyPassword" shiro:hasPermission="role:add">Change Password</a>
+                    </dd>
+                </dl>
+            </li>
+            <li class="layui-nav-item">
+                <a href="" th:href="@{/logout}">Logout</a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="layui-side layui-bg-black">
+        <div class="layui-side-scroll">
+            <!-- Left navigation area (can be used with layui's vertical navigation) -->
+            <ul class="layui-nav layui-nav-tree" lay-filter="test">
+                <!--Loop through menu-->
+                <li class="layui-nav-item layui-nav-itemed" th:each="menu:${menus}">
+                    <a href="javascript:;" th:if="${menu.menuType == 0}">
+                        <i class="layui-icon" th:attrappend="class=' '+${menu.icon}"
+                           style="font-size: 20px; color: #1E9FFF;"></i>
+                        <span th:text="${menu.menuName}">System Management</span>
+                    </a>
+                    <dl class="layui-nav-child" th:if="${#lists.size(menu.children)>0}"
+                        th:each="child,stat:${menu.children}">
+                        <dd>
+                            <a href="javascript:;" class="sec-nav site-active" data-type="tabAdd"
+                               th:attr="data-title=${child.menuName},data-id=${child.id},data-url=${child.url}"
+                               th:text="${child.menuName}">Department Management</a>
+                        </dd>
+                    </dl>
+                </li>
+                <!--<li class="layui-nav-item layui-nav-itemed">
+                    <a href="javascript:;">
+                        <i class="layui-icon layui-icon-set-fill" style="font-size: 20px; color: #1E9FFF;"></i>
+                        <span>System Management</span>
+                    </a>
+                    <dl class="layui-nav-child">
+                        <dd>
+                            <a href="javascript:;" class="sec-nav site-active" data-title="Department Management" data-type="tabAdd" data-id="101"
+                               data-url="sysDept/listUI">Department Management</a>
+                        </dd>
+                        <dd>
+                            <a href="javascript:;" class="sec-nav site-active" data-title="Role Management" data-type="tabAdd" data-id="102"
+                               data-url="sysRole/listUI">Role Management</a>
+                        </dd>
+                        <dd>
+                            <a href="javascript:;" class="sec-nav site-active" data-title="Permission Management" data-type="tabAdd" data-id="103"
+                               data-url="sysMenu/listUI">Permission Management</a>
+                        </dd>
+                        <dd>
+                            <a href="javascript:;" class="sec-nav site-active" data-title="User Management" data-type="tabAdd" data-id="104"
+                               data-url="sysUser/listUI">User Management</a>
+                        </dd>
+                    </dl>
+                </li>
+                <li class="layui-nav-item layui-nav-itemed">
+                    <a href="javascript:;">
+                        <i class="layui-icon layui-icon-chart-screen" style="font-size: 20px; color: #1E9FFF;"></i>
+                        <span>System Monitoring</span>
+                    </a>
+                    <dl class="layui-nav-child">
+                        <dd>
+                            <a href="javascript:;" class="sec-nav site-active" data-title="Log Management" data-type="tabAdd" data-id="105"
+                               data-url="operlog/listUI">Log Management</a>
+                        </dd>
+                    </dl>
+                </li>-->
+            </ul>
+        </div>
+    </div>
+
+    <div class="layui-body">
+        <!-- Main content area -->
+        <div style="padding: 5px;">
+            <div class="layui-tab" lay-filter="mytab" lay-allowClose="true">
+                <ul class="layui-tab-title">
+                </ul>
+                <ul class="rightmenu" style="display: none;position: absolute;">
+                    <li class="context-menu-item" data-type="closeThis"><span>Close Tab</span></li>
+                    <li class="context-menu-item" data-type="closeOthers"><span>Close Others</span></li>
+                    <li class="context-menu-item" data-type="closeAll"><span>Close All</span></li>
+                </ul>
+                <div class="layui-tab-content" style="min-height: 800px;border: none">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-footer" th:text="${'©ChrisHua All Rights Reserved：'}">
+        <!-- Fixed footer area -->
+    </div>
+
+    <div style="display: none;">
+        <div id="modifyPasswordDiv">
+            <div class="layui-form" lay-filter="modifyPasswordFrom" style="margin: 10px 20px;">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">Original Password<font color="red">*</font></label>
+                    <div class="layui-input-block">
+                        <input type="password" id="oldPassword" name="oldPassword"
+                               lay-verify="required" placeholder="" autocomplete="off"
+                               class="layui-input" maxlength="14" required="required">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">New Password<font color="red">*</font></label>
+                    <div class="layui-input-block">
+                        <input type="password" id="newPassword" name="newPassword"
+                               placeholder="" autocomplete="off" class="layui-input"
+                               maxlength="14" lay-verify="required" required="required">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">Confirm Password<font color="red">*</font></label>
+                    <div class="layui-input-block">
+                        <input type="password" id="newPassword2" name="newPassword2"
+                               placeholder="" autocomplete="off" class="layui-input"
+                               maxlength="14" lay-verify="required" required="required">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<input type="text" id="ctx" hidden="hidden" th:value="${#request.getContextPath()}">
+
+<script th:src="@{/static/js/jquery.min.js}" charset="utf-8"></script>
+<script th:src="@{/static/plugin/layui/layui.all.js}"></script>
+<script th:src="@{/static/js/app.js}"></script>
+
+<script th:inline="text">
+    var active;
+
+    $(document).on('click', function (e) {
+        $('.rightmenu').hide();
+    });
+
+    layui.use(['element', 'layer'], function () {
+        var $ = layui.jquery;
+        var element = layui.element; //Tab's switching functionality, event listening, etc., depends on the element module
+
+        //Trigger events
+        active = {
+            //Bind several events to active here, which can be called later through active
+            tabAdd: function (url, id, name) {
+                //Add a new Tab item with three parameters: title, tab page URL, and a specific id, which is the value of the data-id attribute in the tag
+                //For more about the tabAdd method parameters, see the basic methods section in the layui development documentation
+                element.tabAdd('mytab', {
+                    title: name,
+                    content: '<iframe data-frameid="' + id + '" scrolling="auto" frameborder="0" src="' + url + '" style="width:100%;height:99%;"></iframe>',
+                    id: id //Predefined id
+                })
+                CustomRightClick(id); //Bind right-click event to tab
+                FrameWH();  //Calculate iframe layer size
+            },
+            tabChange: function (id) {
+                //Switch to specified Tab item
+                element.tabChange('mytab', id); //Switch to the specified tab based on the passed id
+            },
+            tabDelete: function (id) {
+                element.tabDelete("mytab", id);//Delete
+            }
+            , tabDeleteAll: function (ids) {//Delete all
+                $.each(ids, function (i, item) {
+                    element.tabDelete("mytab", item); //ids is an array containing multiple ids, call tabDelete method to delete each one
+                })
+            }
+            , tabDeleteOthers: function (ids) {//Delete others
+                $.each(ids, function (i, item) {
+                    element.tabDelete("mytab", item); //ids is an array containing multiple ids, call tabDelete method to delete each one
+                })
+            }
+        };
+
+
+        //When clicking on tags with site-demo-active attribute, i.e., content in the left menu bar, trigger the click event
+        $('.site-active').on('click', function () {
+            var dataid = $(this);
+
+            //Now check the number of li elements with lay-id attribute under .layui-tab-title, i.e., the number of already opened tabs
+            if ($(".layui-tab-title li[lay-id]").length <= 0) {
+                //If less than or equal to zero, directly open a new tab
+                active.tabAdd(dataid.attr("data-url"), dataid.attr("data-id"), dataid.attr("data-title"));
+            } else {
+                //Otherwise, check if the tab already exists
+
+                var isData = false; //Initialize a flag, false means the tab is not open, true means it is already open
+                $.each($(".layui-tab-title li[lay-id]"), function () {
+                    //If the id passed from clicking the left menu bar can be found in the lay-id attribute of the right tab, then the tab is already open
+                    if ($(this).attr("lay-id") == dataid.attr("data-id")) {
+                        isData = true;
+                    }
+                })
+                if (isData == false) {
+                    //If flag is false, add a new tab
+                    active.tabAdd(dataid.attr("data-url"), dataid.attr("data-id"), dataid.attr("data-title"));
+                }
+            }
+            //Finally, regardless of whether a new tab is added, switch to the tab to be opened
+            active.tabChange(dataid.attr("data-id"));
+        });
+
+        function CustomRightClick(id) {
+            //Cancel right-click. The rightmenu attribute is initially hidden, shown on right-click, hidden on left-click
+            $('.layui-tab-title li').on('contextmenu', function () {
+                return false;
+            })
+            $('.layui-tab-title,.layui-tab-title li').click(function () {
+                $('.rightmenu').hide();
+            });
+
+            //Desktop right-click
+            $('.layui-tab-title li').on('contextmenu', function (e) {
+                var popupmenu = $(".rightmenu");
+                popupmenu.find("li").attr("data-id", id); //Bind id attribute to tags in the right-click menu
+
+                //Determine the position of the right menu
+                l = ($(document).width() - e.clientX) < popupmenu.width() ? (e.clientX - popupmenu.width()) : e.clientX;
+                t = ($(document).height() - e.clientY) < popupmenu.height() ? (e.clientY - popupmenu.height()) : e.clientY;
+                popupmenu.css({left: l - 200, top: t - 30}).show(); //Absolute positioning
+                //alert("Right-click menu")
+                return false;
+            });
+        }
+
+        $(".rightmenu li").click(function () {
+            var curId = $(this).attr("data-id");
+            var tabtitle = $(".layui-tab-title li");
+            var ids = new Array();
+
+            //After an option in the right-click menu is clicked, determine the type to decide whether to close all or close current
+            if ($(this).attr("data-type") == "closeThis") {
+                //If close current, execute tabDelete based on the id bound when displaying the right-click menu
+                active.tabDelete(curId)
+            } else if ($(this).attr("data-type") == "closeAll") {
+                //If close all, put all lay-ids into an array and execute tabDeleteAll
+                $.each(tabtitle, function (i) {
+                    ids[i] = $(this).attr("lay-id");
+                })
+                active.tabDeleteAll(ids);
+            } else if ($(this).attr("data-type") == "closeOthers") {
+                //If close others, exclude the current window ID
+                $.each(tabtitle, function (i) {
+                    if (curId != $(this).attr("lay-id")) {
+                        ids[i] = $(this).attr("lay-id");
+                    }
+                })
+                active.tabDeleteAll(ids);
+            }
+
+            $('.rightmenu').hide(); //Finally hide the right-click menu
+        })
+
+        function FrameWH() {
+            var h = $(window).height() - 41 - 10 - 60 - 10 - 44 - 10;
+            $("iframe").css("height", h + "px");
+        }
+
+        $(window).resize(function () {
+            FrameWH();
+        })
+    });
+
+
+    $(function () {
+        $(".site-active")[0].click();
+
+        // Change password
+        $("#modifyPassword").click(function () {
+            var showContent = $('#modifyPasswordDiv').html();
+            $('#modifyPasswordDiv').html("");
+            layer.open({
+                type: 1,
+                id: 'modifyPasswordDiv1',
+                title: 'Change Password',
+                content: showContent, //Here content is a DOM, note: it's best if this element is placed in the outermost layer of the body, otherwise it may be affected by other relative elements
+                area: '400px',
+                btn: ['Confirm', 'Cancel'],
+                btnAlign: 'c',
+                success: function (layero, index) {//Callback that can be executed after opening the layer
+                    layui.use(['form', 'layer'], function () {
+                        var form = layui.form;
+                        var layer = layui.layer;
+
+                        form.render();  //Re-render the form
+                    });
+                },
+                yes: function (index, layero) { //Confirm button
+                    var param = {};
+                    //con.userId = userId.id;
+                    param.oldPassword = $("#oldPassword").val();
+                    param.newPassword = $("#newPassword").val();
+                    param.newPassword2 = $("#newPassword2").val();
+
+                    $.ajax({
+                        url: "/modifyPassword",
+                        dataType: 'json',
+                        contentType: "application/json",
+                        type: 'post',
+                        async: false,
+                        data: JSON.stringify(param),
+                        success: function (result) {
+                            if (result.code == 200) {
+                                $("#oldPassword").val("");
+                                $("#newPassword").val("");
+                                $("#newPassword2").val("");
+                                layer.msg("Modified successfully, please login again!", {
+                                    icon: 1,
+                                    time: 2000 //Close in 2 seconds (if not configured, default is 3 seconds)
+                                }, function () {
+                                    window.location.href = "/logout";
+                                });
+                            } else {
+                                layer.msg(result.message);
+                            }
+
+                        }
+                    });
+
+                },
+                end: function () { //end will always execute as long as the layer is destroyed
+                    $('#modifyPasswordDiv').html(showContent);
+                }
+
+            });
+        });
+
+    });
+
+</script>
+</body>
+</html>
