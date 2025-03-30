@@ -22,7 +22,7 @@ Software architecture description
   - Execute SQL statement (authman.sql)
 3. Modify the database password in application.yml
 4. Start the project: `docker-compose up -d`
-5. Access the system: localhost:8081/authman, username: admin password: 123
+5. Access the system: `localhost:8081/authman`, username: `admin` password: `123`
 
 ## Features
 1. Department management
