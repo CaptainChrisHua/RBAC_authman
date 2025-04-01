@@ -1,21 +1,19 @@
 /** layuiAdmin.std-v1.2.1 LPPL License By http://www.layui.com/admin/ */
 
-body{
+body {
     background: url("../img/bg2.jpg") no-repeat;
-    position:fixed;
+    position: fixed;
     top: 0;
     left: 0;
-    width:100%;
-    height:100%;
-    min-width: 1000px;
-    z-index:-10;
-    zoom: 1;
+    width: 100%;
+    height: 100%;
+    z-index: -10;
     background-color: #fff;
     background-repeat: no-repeat;
     background-size: cover;
     -webkit-background-size: cover;
     -o-background-size: cover;
-    background-position: center 0;;
+    background-position: center center;
 }
 
 #LAY_app, body, html {
@@ -36,12 +34,19 @@ body{
     top: 0;
     padding: 110px 0;
     min-height: 100%;
-    box-sizing: border-box
+    box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
 }
 
 .layadmin-user-login-main {
-    width: 305px;
-    margin: 0 46% 0 auto;
+    width: 375px;
+    /* 关键修改：移除右侧margin，设置为居中 */
+    margin: 0 auto;
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 5px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.15);
     box-sizing: border-box;
 }
 
@@ -61,15 +66,14 @@ body{
 }
 
 .layadmin-user-login-header p {
-    /*font-weight: bold;*/
-    color: #fff;
+    color: #333;
     font-size: 16px;
-    letter-spacing: 5px;
+    letter-spacing: 3px;
 }
 
 .layadmin-user-login-body .layui-form-item {
     position: relative;
-    text-align: center;
+    margin-bottom: 20px;
 }
 
 .layadmin-user-login-icon {
@@ -79,46 +83,45 @@ body{
     width: 38px;
     line-height: 36px;
     text-align: center;
-    color: #d2d2d2
+    color: #d2d2d2;
 }
 
 .layadmin-user-login-body .layui-form-item .layui-input {
-    padding-left: 38px
+    padding-left: 38px;
+    height: 38px;
+    font-size: 14px;
 }
 
 .layadmin-user-login-codeimg {
     max-height: 38px;
     width: 100%;
     cursor: pointer;
-    box-sizing: border-box
+    box-sizing: border-box;
+    border: 1px solid #e6e6e6;
 }
 
 .layadmin-user-login-other {
     position: relative;
     font-size: 0;
     line-height: 38px;
+    text-align: center;
 }
 
 .layadmin-user-login-other > * {
     display: inline-block;
     vertical-align: middle;
-    /*margin-right: 10px;*/
-    font-size: 12px
+    font-size: 14px;
 }
 
 .layadmin-user-login-other .layui-icon {
     position: relative;
     top: 2px;
-    font-size: 26px
+    font-size: 26px;
 }
 
 .layadmin-user-login-other a:hover {
-    opacity: .8
+    opacity: .8;
 }
-
-/*.layadmin-user-jump-change {
-    float: right
-}*/
 
 .layadmin-user-login-footer {
     position: absolute;
@@ -129,25 +132,25 @@ body{
     padding: 20px;
     text-align: center;
     box-sizing: border-box;
-    color: rgba(0, 0, 0, .5)
+    color: rgba(0, 0, 0, .5);
 }
 
 .layadmin-user-login-footer span {
-    padding: 0 5px
+    padding: 0 5px;
 }
 
 .layadmin-user-login-footer a {
     padding: 0 5px;
-    color: rgba(0, 0, 0, .5)
+    color: rgba(0, 0, 0, .5);
 }
 
 .layadmin-user-login-footer a:hover {
-    color: rgba(0, 0, 0, 1)
+    color: rgba(0, 0, 0, 1);
 }
 
 .layadmin-user-login-main[bgimg] {
     background-color: #fff;
-    box-shadow: 0 0 5px rgba(0, 0, 0, .05)
+    box-shadow: 0 0 5px rgba(0, 0, 0, .05);
 }
 
 .ladmin-user-login-theme {
@@ -155,13 +158,13 @@ body{
     bottom: 0;
     left: 0;
     width: 100%;
-    text-align: center
+    text-align: center;
 }
 
 .ladmin-user-login-theme ul {
     display: inline-block;
     padding: 5px;
-    background-color: #fff
+    background-color: #fff;
 }
 
 .ladmin-user-login-theme ul li {
@@ -172,23 +175,83 @@ body{
     cursor: pointer;
     transition: all .3s;
     -webkit-transition: all .3s;
-    background-color: #f2f2f2
+    background-color: #f2f2f2;
 }
 
 .ladmin-user-login-theme ul li:hover {
-    opacity: .9
+    opacity: .9;
+}
+
+/* 响应式布局设置 */
+@media screen and (max-width: 992px) {
+    .layadmin-user-login-main {
+        width: 80%;
+        max-width: 375px;
+    }
+
+    .layadmin-user-login {
+        padding: 80px 0;
+    }
 }
 
 @media screen and (max-width: 768px) {
+    body {
+        min-width: auto;
+    }
+
     .layadmin-user-login {
-        padding-top: 60px
+        padding: 60px 0;
     }
 
     .layadmin-user-login-main {
-        width: 300px
+        width: 85%;
     }
 
     .layadmin-user-login-box {
-        padding: 10px
+        padding: 15px;
+    }
+
+    .layadmin-user-login-header h2 {
+        font-size: 24px;
+    }
+
+    .layadmin-user-login-header p {
+        font-size: 14px;
+        letter-spacing: 2px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .layadmin-user-login {
+        padding: 40px 0;
+    }
+
+    .layadmin-user-login-main {
+        width: 90%;
+    }
+
+    .layadmin-user-login-box {
+        padding: 10px;
+    }
+
+    .layadmin-user-login-header h2 {
+        font-size: 22px;
+    }
+
+    .layadmin-user-login-header p {
+        font-size: 12px;
+        letter-spacing: 1px;
+    }
+
+    .layadmin-user-login-body .layui-form-item {
+        margin-bottom: 15px;
+    }
+
+    .layadmin-user-login-body .layui-form-item .layui-input {
+        height: 36px;
+    }
+
+    .layadmin-user-login-codeimg {
+        max-height: 36px;
     }
 }
