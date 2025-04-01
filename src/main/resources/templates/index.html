@@ -363,7 +363,7 @@
                     param.newPassword2 = $("#newPassword2").val();
 
                     $.ajax({
-                        url: "/modifyPassword",
+                        url: ctx + "/modifyPassword",
                         dataType: 'json',
                         contentType: "application/json",
                         type: 'post',
@@ -378,7 +378,7 @@
                                     icon: 1,
                                     time: 2000 //Close in 2 seconds (if not configured, default is 3 seconds)
                                 }, function () {
-                                    window.location.href = "/logout";
+                                    window.location.href = ctx + "/logout";
                                 });
                             } else {
                                 layer.msg(result.message);
